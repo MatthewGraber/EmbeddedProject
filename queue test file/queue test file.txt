@@ -1,0 +1,143 @@
+/******************************************************************************
+
+
+
+*******************************************************************************/
+//this is the start of the queue header file
+#ifndef INC_SMC_QUEUE_STRUCT_H_
+#define INC_SMC_QUEUE_STRUCT_H_
+
+
+#include <stddef.h> // size_t
+#include <stdint.h>
+#include <stdbool.h>
+
+
+#define SMC_Q_BUFSIZE 10
+
+// To make a queue that is easy to revise to hold any type
+// this file defines the contents of all queues as Q_data
+// and defines that type at only one point: here.
+// If you want to pass messages other than this union, you
+// do not need to change any code in smc_queue_struct.h or .c
+// except at this point.
+// I am showing off a feature by using a UNION, but replacing
+// if with "typedef int32_t Q_data;" would be simpler and safer.
+
+#define SMC_Q_BUFSIZE 10
+enum Twist {QUADKNOB_CW, QUADKNOB_CCW, QUADKNOB_STILL};
+typedef union {
+		int int_val;
+		float float_val;
+		enum Twist twist;
+} Q_data;
+
+typedef struct smc_queue_struct {
+	// ATTRIBUTES
+	size_t cap;
+	size_t burden;
+	size_t tail;
+	size_t head;
+	Q_data buffer[SMC_Q_BUFSIZE];
+
+	// METHODS
+	bool (*put)(struct smc_queue_struct *q, const Q_data *msg);
+	bool (*peek)(const struct smc_queue_struct *q, Q_data *msg);
+	bool (*get)(struct smc_queue_struct *q,  Q_data *msg);
+} Smc_queue;
+
+Smc_queue* smc_queue_init( Smc_queue* Q);
+bool smc_queue_put(Smc_queue *q, const Q_data *msg);
+bool smc_queue_peek(const Smc_queue *q, Q_data *msg);
+bool smc_queue_get(Smc_queue *q, Q_data *msg);
+
+
+
+
+#endif /* INC_SMC_QUEUE_STRUCT_H_ */
+//this is the end of the queue header file
+
+
+#include <stdio.h>
+//this creates the initialization 
+
+Smc_queue* smc_queue_init(Smc_queue* q){
+	q->head = 0;
+	q->tail= 0;
+	q->cap = SMC_Q_BUFSIZE;
+	q->burden = 0;
+	q->put = &(smc_queue_put);
+	q->get = &(smc_queue_get);
+	//q->peek = &(smc_queue_peek);
+	return q;
+}
+
+//puts the message in the queue
+bool smc_queue_put(Smc_queue *q, const Q_data *msg)
+{
+    //have to initialize success
+    bool success = false;
+    //if there is no room in the queue then return flase
+    if (q->burden>=q->cap)
+    {
+        success = false;
+    }
+    else
+    {
+         q-> burden += 1;
+		 q->buffer[q->tail] = *msg;
+		 success = true;
+		 //if the tail is out of range of the array then i set the tail back to zero
+		 if (q->tail > q->burden)
+		 {
+		     q->tail = 0;
+		 }
+		 else
+		 {
+		     q->tail += 1;
+		 }
+    }
+    return success;
+}
+bool smc_queue_get(Smc_queue *q, Q_data  *msg){
+	bool success = false;
+	// if there is no value in the queue then return false
+	if (q->burden == 0) success= false;
+
+	else 
+	{
+	    // get message from the head
+		*msg = q->buffer[q->head];
+		// shift the head to the right
+		q-> head += 1;
+		q-> burden -= 1;
+		success = true;
+		if(q->head>=q->burden)
+		{
+		    q->head = 0;
+		}
+	}
+	return success;
+}
+
+
+
+int main()
+{
+    Smc_queue* q;
+    int A[10];
+    Q_data msg;
+    msg.int_val = 1;
+    printf("%d\n",msg.int_val);
+    bool error_warning_out_of_space = true;    
+    for (uint16_t i = 0; i<=15;i++)
+    {
+        error_warning_out_of_space=q->put(q, &msg);
+    }
+
+    for (uint16_t i = 0; i<=10;i++)
+    {
+        printf("%d\n",A[i]);
+    }
+    return 0;
+}
