@@ -142,7 +142,7 @@ void snake_main(void){
 
 	// Welcome screen = checkerboard for 2 seconds.
 	timer_isr_countdown = timer_isr_2000ms_restart;
-	display_checkerboard();
+	Matrix_Initialize_Test();
 	while (timer_isr_countdown > 0){}
 	timer_isr_countdown = timer_isr_500ms_restart;
 	// Confirm all the rules and paint the initial snake.
