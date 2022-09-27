@@ -7,7 +7,7 @@
 #ifndef INC_SMC_QUEUE_STRUCT_H_
 #define INC_SMC_QUEUE_STRUCT_H_
 
-
+#include <stdio.h>
 #include <stddef.h> // size_t
 #include <stdint.h>
 #include <stdbool.h>
@@ -84,7 +84,9 @@ bool smc_queue_put(Smc_queue *q, const Q_data *msg)
     }
     else
     {
+        //burden is the amount of elements in the array
          q-> burden += 1;
+         //puts the message in the array
 		 q->buffer[q->tail] = *msg;
 		 success = true;
 		 //if the tail is out of range of the array then i set the tail back to zero
@@ -99,11 +101,15 @@ bool smc_queue_put(Smc_queue *q, const Q_data *msg)
     }
     return success;
 }
+
+//gets message out of the queue
 bool smc_queue_get(Smc_queue *q, Q_data  *msg){
 	bool success = false;
 	// if there is no value in the queue then return false
-	if (q->burden == 0) success= false;
-
+	if (q->burden == 0)
+	{
+	    success= false;
+    }
 	else 
 	{
 	    // get message from the head
@@ -112,7 +118,7 @@ bool smc_queue_get(Smc_queue *q, Q_data  *msg){
 		q-> head += 1;
 		q-> burden -= 1;
 		success = true;
-		if(q->head>=q->burden)
+		if(q->head>q->burden)
 		{
 		    q->head = 0;
 		}
@@ -125,19 +131,31 @@ bool smc_queue_get(Smc_queue *q, Q_data  *msg){
 int main()
 {
     Smc_queue* q;
-    int A[10];
+    smc_queue_init(q);
     Q_data msg;
-    msg.int_val = 1;
-    printf("%d\n",msg.int_val);
-    bool error_warning_out_of_space = true;    
-    for (uint16_t i = 0; i<=15;i++)
+    Q_data getdata;
+    bool error_warning_out_of_space = true;
+    
+    printf("test\n");
+    for(int i = 0; i<10;i++)
     {
+        msg.int_val = i;
         error_warning_out_of_space=q->put(q, &msg);
+        
+    }
+    
+    if (error_warning_out_of_space = false)
+    {
+        printf("error\n");
+    }
+    if (error_warning_out_of_space = true)
+    {
+        for(int i = 0; i<10;i++)
+        {
+            error_warning_out_of_space=q->get(q, &getdata);
+            printf("%d\n",getdata.int_val);
+        }
     }
 
-    for (uint16_t i = 0; i<=10;i++)
-    {
-        printf("%d\n",A[i]);
-    }
     return 0;
 }
