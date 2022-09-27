@@ -1,0 +1,10 @@
+
+.cproject
+.mxproject
+.project
+.settings/stm32cubeide.project.prefs
+Drivers/CMSIS/Device/ST/STM32G0xx/Include/stm32g071xx.h
+Drivers
+*.zip
+*.ioc
+*.scratch
