@@ -5,7 +5,7 @@
  *      Author: michael Hudson
  */
 #include "main.h"
-//#include "Matrix_Pong_Display.h"
+
 
 //Both paddles should never change their x coordinates
 //A ball should never have the same y and x coordinate as a paddle, and a  y+1 and x coordinate as a paddle
@@ -31,7 +31,7 @@ void Matrix_LED_DISPLAY_PONG( int L_PADDLE_Y_COORDINATE, int R_PADDLE_Y_COORDINA
 
 			if (LED_MATRIX_COLUMN !=0){
 				if (LED_MATRIX_COLUMN !=7){
-					if (LED_MATRIX_COLUMN == BALL_X_COORDINATE) // If the ball isnt in the same column as a paddle, display ball
+					if (LED_MATRIX_COLUMN == BALL_X_COORDINATE) // If the ball isn't in the same column as a paddle, display ball
 						{//Begin if 2
 						GPIOB->ODR |= (1<<BALL_Y_COORDINATE);// Display Ball
 						}}}//End if 2
