@@ -36,9 +36,85 @@ void pong_paddle_update(pong_game* game, Smc_queue* queue) {
 		// SUPER COOL CODE THAT CHECKS THE MESSAGE AND MOVES THE
 		// PADDLES ACCORDINGLY
 		//
+
+		// switch (THING) {
+		// 	case up1:
+		// 		if (game->p1.location.y > 0) {
+		// 			game->p1.location.y--;
+		// 		}
+		// 		case down1:
+		// 		if (game->p1.location.y <= (CHECKS_WIDE-1)) {
+		// 			game->p1.location.y++;
+		// 		}
+		// 		case up2:
+		// 		if (game->p2.location.y > 0) {
+		// 			game->p2.location.y--;
+		// 		}
+		// 		case down2:
+		// 		if (game->p2.location.y <= (CHECKS_WIDE-1)) {
+		// 			game->p2.location.y++;
+		// 		}
+		// }
 	}
 }
 
+// Will be called every 500ms
 void pong_periodic_play(pong_game* game) {
+	// Get a fresh plot of the board to check for legal & fruit moves:
 	static int8_t board[CHECKS_WIDE][CHECKS_WIDE];
+	// Always clear the board and redraw it.
+	for (int x = 0; x < CHECKS_WIDE; x++){
+		for (int y = 0; y < CHECKS_WIDE; y++){
+			board[x][y] = 0;
+		}
+	}
+
+	// Mark the location of the paddles with 1s
+	board[game->p1.location.x][game->p1.location.y] = 1;
+	board[game->p1.location.x][game->p1.location.y - 1] = 1;
+	board[game->p2.location.x][game->p2.location.y] = 1;
+	board[game->p2.location.x][game->p2.location.y - 1] = 1;
+
+	// Mark the location of the ball with a -1
+	board[game->ball.location.x][game->ball.location.y] = -1;
+
+	// Determine the new location of the ball
+	XY_PT ballNewLocation;
+	ballNewLocation.x = game->ball.location.x;
+	ballNewLocation.y = game->ball.location.y + game->ball.verticalVelocity;
+
+	// If the new location is outside or on the edge of the border, bounce it
+	if (ballNewLocation.y >= CHECKS_WIDE-1) {
+		// Reverse ball velocity
+		game->ball.verticalVelocity = -game->ball.verticalVelocity;
+		ballNewLocation.y += (CHECKS_WIDE-1) - ballNewLocation.y;
+	}
+	else if (ballNewLocation.y <= 0) {
+		game->ball.verticalVelocity = -game->ball.verticalVelocity;
+		ballNewLocation.y -= ballNewLocation.y;
+	}
+
+	// Move the ball horizontally
+	ballNewLocation.x += (game->ball.goingRight)?(1):(-1);
+
+	// Check to see if the ball has collided with a paddle
+	if (board[ballNewLocation.x][ballNewLocation.y] == 1) {
+		game->ball.goingRight ^= 1;	// Reverse ball direction
+		ballNewLocation.x += (game->ball.goingRight)?(2):(-2);	// Bounce it
+	}
+	
+	// TODO: Decide if this should happen now, or later so the player can see the ball move into the space
+	else if (ballNewLocation.x <= 0) {
+		game->p1.score++;
+		// TODO: Victory check function
+		// TODO: Reset function
+	}
+	else if (ballNewLocation.x >= CHECKS_WIDE-1) {
+		game->p2.score++;
+		// TODO: Victory check function
+		// TODO: Reset function
+	}
+
+	game->ball.location.x = ballNewLocation.x;
+	game->ball.location.y = ballNewLocation.y;
 }

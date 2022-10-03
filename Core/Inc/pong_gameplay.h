@@ -27,9 +27,9 @@ typedef struct {
 	Ball ball;
 } pong_game;
 
-void pong_init();
-void pong_perodic();
-void move_ball();
+void pong_init(pong_game*);
+pong_paddle_update(pong_game*, Smc_queue*);
+void pong_perodic_play(pong_game*);
 
 
 #endif /* CORE_INC_PONG_GAMEPLAY_H_ */
