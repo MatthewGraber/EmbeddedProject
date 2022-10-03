@@ -183,19 +183,19 @@ void snake_main(void){
 				command_packet.twist = user_knob_1.get(&user_knob_1);
 				turn_q.put(&turn_q, &command_packet);
 			}
-			snake_heading_update(&my_game, &turn_q);
+			snake_heading_update(&my_game, &turn_q);	// TODO: replace/remove this
 		// ASSERT HEADING IS VALID
 			while ((my_game.heading != SNAKE_COMPASS_N)&&
 					(my_game.heading != SNAKE_COMPASS_E)&&
 					(my_game.heading != SNAKE_COMPASS_S)&&
 					(my_game.heading != SNAKE_COMPASS_W));
-			incremental_show_snake((const snake_game *)&my_game, false);
+			incremental_show_snake((const snake_game *)&my_game, false);	// TODO: replace this
 		}
 		if (timer_isr_countdown <= 0) {
 			// Move and animate every 500 ms
 			timer_isr_countdown = timer_isr_500ms_restart;
-			snake_periodic_play(&my_game);
-			incremental_show_snake(&my_game, true);
+			snake_periodic_play(&my_game);	// TODO: replace this
+			incremental_show_snake(&my_game, true);	// TODO: replace this
 		}
 #endif
 #ifdef TEST_WITHOUT_INPUT
