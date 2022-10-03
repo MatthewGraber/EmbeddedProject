@@ -23,12 +23,14 @@ void Matrix_LED_DISPLAY_PONG( int L_PADDLE_Y_COORDINATE, int R_PADDLE_Y_COORDINA
 
 			//}//End if 1
 
-		//	if (LED_MATRIX_COLUMN == BALL_X_COORDINATE)
+			//if (LED_MATRIX_COLUMN !=0){
+			//if (LED_MATRIX_COLUMN !=7){
+			//if (LED_MATRIX_COLUMN == BALL_X_COORDINATE) // If the ball isnt in the same column as the paddle, display ball
 			//{//Begin if 2
 
-			//}//End if 2
+			//}}}//End if 2
 
-		//	if (LED_MATRIX_COLUMN == 7) // display right paddle
+			//if (LED_MATRIX_COLUMN == 7) // display right paddle
 			//{//Begin if 3
 
 				//	if (BALL_X_COORDINATE == 7) // Check to see if ball is on paddle coordinate
