@@ -8,3 +8,4 @@ Drivers
 *.zip
 *.ioc
 *.scratch
+.vscode/c_cpp_properties.json
