@@ -51,3 +51,45 @@ void Matrix_LED_DISPLAY_PONG( int L_PADDLE_Y_COORDINATE, int R_PADDLE_Y_COORDINA
 			GPIOB->ODR = 0;								 //RESET ROW
 		  }  //END For Loop
 }//End Function
+
+
+void Matrix_LED_DISPLAY_PLAYER_ONE_WIN() // Display P1
+{//Start Function
+	for (volatile int LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
+	{//Begin for LOOP
+		GPIOC->ODR &=~(1<<LED_MATRIX_COLUMN); 		//ENABLE CURRENT LED COLUMN
+		int LED_PLAYER_WIN_ROW_VALUE[8]={126,10,14,0,126,0,0,0};
+		GPIOB->ODR =LED_PLAYER_WIN_ROW_VALUE[LED_MATRIX_COLUMN];
+		GPIOC->ODR =255;							// RESET COLUMN
+		GPIOB->ODR = 0;								 //RESET ROW
+	} //END For Loop
+}//End Function
+
+
+void Matrix_LED_DISPLAY_PLAYER_TWO_WIN() // Display P2
+{//Start Function
+	for (volatile int LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
+	{//Begin for LOOP
+		GPIOC->ODR &=~(1<<LED_MATRIX_COLUMN); 		//ENABLE CURRENT LED COLUMN
+		int LED_PLAYER_WIN_ROW_VALUE[8]={126,10,14,0,114,82,94,0};  // Register values for propper row lights
+		GPIOB->ODR =LED_PLAYER_WIN_ROW_VALUE[LED_MATRIX_COLUMN];  // Enable Row
+		GPIOC->ODR =255;							// RESET COLUMN
+		GPIOB->ODR = 0;								 //RESET ROW
+	} //END For Loop
+}//End Function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
