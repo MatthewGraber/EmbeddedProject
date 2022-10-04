@@ -32,29 +32,32 @@ void pong_paddle_update(pong_game* game, Smc_queue* queue) {
 	bool data_available;
 	data_available = queue->get(queue, &message);
 	if (data_available) {
-		//
-		// SUPER COOL CODE THAT CHECKS THE MESSAGE AND MOVES THE
-		// PADDLES ACCORDINGLY
-		//
 
-		// switch (THING) {
-		// 	case up1:
-		// 		if (game->p1.location.y > 0) {
-		// 			game->p1.location.y--;
-		// 		}
-		// 		case down1:
-		// 		if (game->p1.location.y <= (CHECKS_WIDE-1)) {
-		// 			game->p1.location.y++;
-		// 		}
-		// 		case up2:
-		// 		if (game->p2.location.y > 0) {
-		// 			game->p2.location.y--;
-		// 		}
-		// 		case down2:
-		// 		if (game->p2.location.y <= (CHECKS_WIDE-1)) {
-		// 			game->p2.location.y++;
-		// 		}
-		// }
+
+		switch (message.THING) {
+			case up1:
+				if (game->p1.location.y > 0) {
+					game->p1.location.y--;
+				}
+				break;
+			case down1:
+				if (game->p1.location.y <= (CHECKS_WIDE-PADDLE_LENGTH)) {
+					game->p1.location.y++;
+				}
+				break;
+			case up2:
+				if (game->p2.location.y > 0) {
+					game->p2.location.y--;
+				}
+				break;
+			case down2:
+				if (game->p2.location.y <= (CHECKS_WIDE-PADDLE_LENGTH)) {
+					game->p2.location.y++;
+				}
+				break;
+			default:
+				break;
+		 }
 	}
 }
 
@@ -70,10 +73,10 @@ void pong_periodic_play(pong_game* game) {
 	}
 
 	// Mark the location of the paddles with 1s
-	board[game->p1.location.x][game->p1.location.y] = 1;
-	board[game->p1.location.x][game->p1.location.y - 1] = 1;
-	board[game->p2.location.x][game->p2.location.y] = 1;
-	board[game->p2.location.x][game->p2.location.y - 1] = 1;
+	board[game->p1.location.x][game->p1.location.y	] = 1;
+	board[game->p1.location.x][game->p1.location.y-1] = 1;
+	board[game->p2.location.x][game->p2.location.y	] = 1;
+	board[game->p2.location.x][game->p2.location.y-1] = 1;
 
 	// Mark the location of the ball with a -1
 	board[game->ball.location.x][game->ball.location.y] = -1;
