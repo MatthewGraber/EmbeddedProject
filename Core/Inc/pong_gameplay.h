@@ -8,6 +8,8 @@
 #ifndef CORE_INC_PONG_GAMEPLAY_H_
 #define CORE_INC_PONG_GAMEPLAY_H_
 
+#define PADDLE_LENGTH 2
+
 typedef struct {int16_t x; int16_t y;} XY_PT;
 
 typedef struct {
@@ -28,7 +30,7 @@ typedef struct {
 } pong_game;
 
 void pong_init(pong_game*);
-pong_paddle_update(pong_game*, Smc_queue*);
+void pong_paddle_update(pong_game*, Smc_queue*);
 void pong_perodic_play(pong_game*);
 
 
