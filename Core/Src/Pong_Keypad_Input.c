@@ -11,12 +11,20 @@
 
 #include <Pong_Keypad_Input.h>
 #include "main.h"
-int paddle1; // -1 = down, 0 = still, 1 = up
-int paddle2; // -1 = down, 0 = still, 1 = up
-uint32_t first;
+//int paddle1; // -1 = down, 0 = still, 1 = up
+//int paddle2; // -1 = down, 0 = still, 1 = up
 uint32_t second;
+uint32_t first;
+uint16_t state;
 
-void keypad_Inputs(){
+void Pong_Keypad_Input_init(Pong_Keypad_Input *self){
+	self->update = &keypad_Inputs;
+	self->get = Pong_Keypad_Input_get;
+	state = 0x0;
+}
+
+
+void keypad_Inputs(Pong_Keypad_Input *self){
 	//Set column one to a pulled down output
 		GPIOB->MODER |= (1<<10); //Sets PD5 to Output
 		GPIOB->OSPEEDR |= (1 << 10);
@@ -41,24 +49,31 @@ void keypad_Inputs(){
 		second = GPIOB->IDR;
 
 		if((first == 0x10) && (second == 0x4030)){         //Button 1
-			paddle1 = 1;
+			state = 0x1;
 		}
 		if((first == 0x4000) && (second == 0x4030)){         //Button 7
-			paddle1 = -1;
+			state = 0x2;
 		}
-		if((first == 0x4018) && (second == 0x4030)){        //Probably have to change this
-				paddle1 = 0;
-				paddle2 = 0;
+		if((first == 0x4018) && (second == 0x4030)){
+				state = 0x0;
 			}
 
 		if((first == 0x4018) && (second == 0x10)){         //Button 3
-					paddle2 = 1;
+					state = 0x4;
 			}
 			if((first == 0x4018) && (second == 0x4000)){         //Button 9
-				paddle2 = -1;
+				state = 0x8;
 			}
-			if((first == 0x4010) && (second == 0x4010)){   //Same as above probably wrong
-				paddle1 = 0;
-				paddle2 = 0;
+			if((first == 0x4010) && (second == 0x4010)){
+				state = 0x0;
 			}
+		self->push = state;
+
 }
+
+int Pong_Keypad_Input_get(const Pong_Keypad_Input *self){
+	return self->push;
+}
+
+
+
