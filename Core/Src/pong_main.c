@@ -63,7 +63,7 @@ void pong_main(void){
 
 	// Welcome screen = checkerboard for 2 seconds.
 	timer_isr_countdown = timer_isr_2000ms_restart;
-	display_checkerboard();
+	Matrix_Initialize_Test();
 	while (timer_isr_countdown > 0){}
 	timer_isr_countdown = timer_isr_500ms_restart;
 	// Confirm all the rules and paint the initial pong.
@@ -109,13 +109,14 @@ void pong_main(void){
 		    // ASSERT THAT THE PADDLES ARE IN THE RIGHT PLACE HORIZONTALLY
 			while (&pong_game->p1.x != 0 || &pong_game->p2.x != (CHECKS_WIDE-1));
 
-			incremental_show_snake((const snake_game *)&my_game, false);	// TODO: replace this
+			Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
+			//incremental_show_snake((const snake_game *)&my_game, false);	// TODO: replace this
 		}
 		if (timer_isr_countdown <= 0) {
 			// Move and animate every 500 ms
 			timer_isr_countdown = timer_isr_500ms_restart;
 			pong_periodic_play(&my_game);
-			incremental_show_snake(&my_game, true);	// TODO: replace this
+			//incremental_show_snake(&my_game, true);	// TODO: replace this
 		}
 #endif
 #ifdef TEST_WITHOUT_INPUT
