@@ -22,7 +22,7 @@ typedef
 
 
 // Methods for Pong_Keypad_Input
-void keypad_Inputs();
+void keypad_Inputs(Pong_Keypad_Input *self, Smc_queue *pass);
 int Pong_Keypad_Input_get(const Pong_Keypad_Input *self);
 void Pong_Keypad_Input_init(Pong_Keypad_Input *self);
 

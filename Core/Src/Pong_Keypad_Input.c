@@ -11,6 +11,7 @@
 
 #include <Pong_Keypad_Input.h>
 #include "main.h"
+#include "circle_queue.h"
 //int paddle1; // -1 = down, 0 = still, 1 = up
 //int paddle2; // -1 = down, 0 = still, 1 = up
 uint32_t second;
@@ -24,7 +25,7 @@ void Pong_Keypad_Input_init(Pong_Keypad_Input *self){
 }
 
 
-void keypad_Inputs(Pong_Keypad_Input *self){
+void keypad_Inputs(Pong_Keypad_Input *self, Smc_queue *pass){
 	//Set column one to a pulled down output
 		GPIOA->MODER |= (1<<10); //Sets PD5 to Output
 		GPIOA->OSPEEDR |= (1 << 10);
@@ -68,12 +69,14 @@ void keypad_Inputs(Pong_Keypad_Input *self){
 				state = 0x0;
 			}
 		self->push = state;
+		smc_queue.put(pass, state);
 
 }
 
 int Pong_Keypad_Input_get(const Pong_Keypad_Input *self){
 	return self->push;
 }
+
 
 
 
