@@ -5,9 +5,7 @@
  *      Author: rcsmith20
  */
 
-
-Smc_queue* buzzer_queue;
-smc_queue_init(buzzer_queue);
+#include "buzzer.h"
 void buzzer(int collision)
 {
 	bool error = false;
