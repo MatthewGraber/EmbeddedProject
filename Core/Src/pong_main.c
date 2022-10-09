@@ -45,10 +45,14 @@ void pong_main(void){
 	volatile uint16_t ram_dummy_1 = MEMORY_BARRIER_1;
 	pong_game_init(&my_game);
 
-	// Construct IPC
-	Smc_queue turn_q;
+//	// Construct IPC
+//	Smc_queue turn_q;
+//	smc_queue_init(&turn_q);
+
+	// Button queue
+	Smc_queue button_queue;
 	volatile uint16_t ram_dummy_2 = MEMORY_BARRIER_2;
-	smc_queue_init(&turn_q);
+	smc_queue_init(&button_queue);
 
 	// Input object
 	QuadKnob user_knob_1;
@@ -86,38 +90,50 @@ void pong_main(void){
 		}
 
 #ifndef TEST_WITHOUT_INPUT
-		// Check for user input every 1 ms & paint one block of the display.
-		if (prior_timer_countdown != timer_isr_countdown ){
-			prior_timer_countdown = timer_isr_countdown;
-			// If time changed, about 1 ms has elapsed.
-			// Once each 1 ms, read input pins from user knob and then
-			// update "knob" object (which debounces each input pin and
-			// then calculates user command).
 
-			bool user_knob_1_pin_A = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobA_GPIO_Port, QuadKnobA_Pin));
-			bool user_knob_1_pin_B = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobB_GPIO_Port, QuadKnobB_Pin));
-			user_knob_1.update(&user_knob_1, user_knob_1_pin_A, user_knob_1_pin_B);
+		// If a player has won, display their victory instead of doing other things
+		if (my_game.p1.score >= 1) {
+			Matrix_LED_DISPLAY_PLAYER_ONE_WIN();
+		}
+		else if (my_game.p2.score >= 1) {
+			Matrix_LED_DISPLAY_PLAYER_TWO_WIN();
+		}
+		else {
+			// Check for user input every 1 ms & paint one block of the display.
+			if (prior_timer_countdown != timer_isr_countdown ){
+				prior_timer_countdown = timer_isr_countdown;
+				// If time changed, about 1 ms has elapsed.
+				// Once each 1 ms, read input pins from user knob and then
+				// update "knob" object (which debounces each input pin and
+				// then calculates user command).
 
-			// Get user command from "knob" - if any action, make it a queue packet and then mail it.
-			if (user_knob_1.get(&user_knob_1) != QUADKNOB_STILL){
-				Q_data command_packet;
-				command_packet.twist = user_knob_1.get(&user_knob_1);
-				turn_q.put(&turn_q, &command_packet);
+				bool user_knob_1_pin_A = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobA_GPIO_Port, QuadKnobA_Pin));
+				bool user_knob_1_pin_B = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobB_GPIO_Port, QuadKnobB_Pin));
+				user_knob_1.update(&user_knob_1, user_knob_1_pin_A, user_knob_1_pin_B);
+
+				// Get user command from "knob" - if any action, make it a queue packet and then mail it.
+				if (user_knob_1.get(&user_knob_1) != QUADKNOB_STILL){
+					Q_data command_packet;
+					command_packet.twist = user_knob_1.get(&user_knob_1);
+					turn_q.put(&turn_q, &command_packet);
+				}
+				pong_paddle_update(&my_game, &turn_q);
+
+				// ASSERT THAT THE PADDLES ARE IN THE RIGHT PLACE HORIZONTALLY
+				while (&pong_game->p1.x != 0 || &pong_game->p2.x != (CHECKS_WIDE-1));
+
+				Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
+				//incremental_show_snake((const snake_game *)&my_game, false);	// TODO: replace this
 			}
-			pong_paddle_update(&my_game, &turn_q);
-
-		    // ASSERT THAT THE PADDLES ARE IN THE RIGHT PLACE HORIZONTALLY
-			while (&pong_game->p1.x != 0 || &pong_game->p2.x != (CHECKS_WIDE-1));
-
-			Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
-			//incremental_show_snake((const snake_game *)&my_game, false);	// TODO: replace this
+			if (timer_isr_countdown <= 0) {
+				// Move and animate every 500 ms
+				timer_isr_countdown = timer_isr_500ms_restart;
+				pong_periodic_play(&my_game);
+				//incremental_show_snake(&my_game, true);	// TODO: replace this
+			}
 		}
-		if (timer_isr_countdown <= 0) {
-			// Move and animate every 500 ms
-			timer_isr_countdown = timer_isr_500ms_restart;
-			pong_periodic_play(&my_game);
-			//incremental_show_snake(&my_game, true);	// TODO: replace this
-		}
+
+
 #endif
 #ifdef TEST_WITHOUT_INPUT
 		static int turns = 0;

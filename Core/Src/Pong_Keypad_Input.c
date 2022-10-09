@@ -26,27 +26,27 @@ void Pong_Keypad_Input_init(Pong_Keypad_Input *self){
 
 void keypad_Inputs(Pong_Keypad_Input *self){
 	//Set column one to a pulled down output
-		GPIOB->MODER |= (1<<10); //Sets PD5 to Output
-		GPIOB->OSPEEDR |= (1 << 10);
-		GPIOB->OSPEEDR |= (1 << 11);
-		GPIOB->MODER &= ~(1<<6); //Sets PD3 to Input
-		GPIOB->PUPDR |= (1<<11); //Sets PD5 to have pull down
-		GPIOB->PUPDR &= ~(1<<10); //Sets PD5 to have pull down
-		GPIOB->PUPDR |= (1<<6);  //Sets PD3 to have pull up
-		GPIOB->PUPDR &= ~(1<<7);  //Sets PD3 to have pull up
+		GPIOA->MODER |= (1<<10); //Sets PD5 to Output
+		GPIOA->OSPEEDR |= (1 << 10);
+		GPIOA->OSPEEDR |= (1 << 11);
+		GPIOA->MODER &= ~(1<<6); //Sets PD3 to Input
+		GPIOA->PUPDR |= (1<<11); //Sets PD5 to have pull down
+		GPIOA->PUPDR &= ~(1<<10); //Sets PD5 to have pull down
+		GPIOA->PUPDR |= (1<<6);  //Sets PD3 to have pull up
+		GPIOA->PUPDR &= ~(1<<7);  //Sets PD3 to have pull up
 
-		first = GPIOB->IDR;
+		first = GPIOA->IDR;
 
-		GPIOB->MODER |= (1<<6); //Sets PD3 to Output
-		GPIOB->OSPEEDR |= (1 << 6);
-		GPIOB->OSPEEDR |= (1 << 7);
-		GPIOB->MODER &= ~(1<<10); //Sets PD5 to Input
-		GPIOB->PUPDR |= (1<<7); //Sets PD3 to have pull down
-		GPIOB->PUPDR &= ~(1<<6); //Sets PD3 to have pull down
-		GPIOB->PUPDR |= (1<<10);  //Sets PD5 to have pull up
-		GPIOB->PUPDR &= ~(1<<11); //Sets PD5 to have pull up
+		GPIOA->MODER |= (1<<6); //Sets PD3 to Output
+		GPIOA->OSPEEDR |= (1 << 6);
+		GPIOA->OSPEEDR |= (1 << 7);
+		GPIOA->MODER &= ~(1<<10); //Sets PD5 to Input
+		GPIOA->PUPDR |= (1<<7); //Sets PD3 to have pull down
+		GPIOA->PUPDR &= ~(1<<6); //Sets PD3 to have pull down
+		GPIOA->PUPDR |= (1<<10);  //Sets PD5 to have pull up
+		GPIOA->PUPDR &= ~(1<<11); //Sets PD5 to have pull up
 
-		second = GPIOB->IDR;
+		second = GPIOA->IDR;
 
 		if((first == 0x10) && (second == 0x4030)){         //Button 1
 			state = 0x1;

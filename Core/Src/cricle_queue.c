@@ -8,16 +8,7 @@
 #include "smc_queue.h"
 #include "snake_enums.h"
 
-Smc_queue* smc_queue_init(Smc_queue* q){
-	q->head = 0;
-	q->tail= 0;
-	q->cap = SMC_Q_BUFSIZE;
-	q->burden = 0;
-	q->put = &(smc_queue_put);
-	q->get = &(smc_queue_get);
-	q->peek = &(smc_queue_peek);
-	return q;
-}
+
 bool smc_queue_put(Smc_queue *q, const Q_data *msg)
 {
     //have to initialize success
