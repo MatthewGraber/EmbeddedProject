@@ -5,7 +5,7 @@
  *      Author: rcsmith20
  */
 
-#include "smc_queue.h"
+#include "circle_queue.h"
 #include "snake_enums.h"
 
 
