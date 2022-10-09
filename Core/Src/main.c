@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "smc_queue.h"
 #include "snake_main.h"
+#include "pong_main.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -101,7 +102,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_TIM_Base_Start_IT(&htim17);  // SMC - Start the timer
-  snake_main();
+  //snake_main();
+  pong_main();
 
   /* USER CODE END 2 */
 
