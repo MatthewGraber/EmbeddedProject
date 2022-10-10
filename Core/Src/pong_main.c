@@ -55,9 +55,12 @@ void pong_main(void){
 	smc_queue_init(&button_queue);
 
 	// Input object
-	QuadKnob user_knob_1;
+//	QuadKnob user_knob_1;
+//	volatile uint16_t ram_dummy_3 = MEMORY_BARRIER_3;
+//	quadknob_init(&user_knob_1);
+	Pong_Keypad_Input input_1;
 	volatile uint16_t ram_dummy_3 = MEMORY_BARRIER_3;
-	quadknob_init(&user_knob_1);
+	Pong_Keypad_Input_init(&input_1);
 
 	// Output object
 	// Block all interrupts while initializing - initial protocol timing is critical.
@@ -107,9 +110,10 @@ void pong_main(void){
 				// update "knob" object (which debounces each input pin and
 				// then calculates user command).
 
-				bool user_knob_1_pin_A = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobA_GPIO_Port, QuadKnobA_Pin));
-				bool user_knob_1_pin_B = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobB_GPIO_Port, QuadKnobB_Pin));
-				user_knob_1.update(&user_knob_1, user_knob_1_pin_A, user_knob_1_pin_B);
+//				bool user_knob_1_pin_A = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobA_GPIO_Port, QuadKnobA_Pin));
+//				bool user_knob_1_pin_B = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobB_GPIO_Port, QuadKnobB_Pin));
+//				user_knob_1.update(&user_knob_1, user_knob_1_pin_A, user_knob_1_pin_B);
+				keypad_inputs(&input_1, &button_queue);
 
 				// Get user command from "knob" - if any action, make it a queue packet and then mail it.
 				if (user_knob_1.get(&user_knob_1) != QUADKNOB_STILL){
