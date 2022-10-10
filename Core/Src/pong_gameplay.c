@@ -33,31 +33,22 @@ void pong_paddle_update(pong_game* game, Smc_queue* queue) {
 	data_available = queue->get(queue, &message);
 	if (data_available) {
 
+		// P1 controls
+		if (message.int_val & (1<<0) && (game->p1.location.y > 0)) {
+			game->p1.location.y--;
+		}
+		else if (message.int_val & (1<<1) && (game->p1.location.y <= (CHECKS_WIDE-PADDLE_LENGTH))) {
+			game->p1.location.y++;
+		}
 
-		switch (message.THING) {
-			case up1:
-				if (game->p1.location.y > 0) {
-					game->p1.location.y--;
-				}
-				break;
-			case down1:
-				if (game->p1.location.y <= (CHECKS_WIDE-PADDLE_LENGTH)) {
-					game->p1.location.y++;
-				}
-				break;
-			case up2:
-				if (game->p2.location.y > 0) {
-					game->p2.location.y--;
-				}
-				break;
-			case down2:
-				if (game->p2.location.y <= (CHECKS_WIDE-PADDLE_LENGTH)) {
-					game->p2.location.y++;
-				}
-				break;
-			default:
-				break;
-		 }
+		// P2 controls
+		if (message.int_val & (1<<2) && (game->p2.location.y > 0)) {
+			game->p2.location.y--;
+		}
+		else if (message.int_val & (1<<3) && (game->p2.location.y <= (CHECKS_WIDE-PADDLE_LENGTH))) {
+			game->p2.location.y++;
+		}
+
 	}
 }
 
