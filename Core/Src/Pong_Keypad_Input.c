@@ -27,48 +27,50 @@ void Pong_Keypad_Input_init(Pong_Keypad_Input *self){
 
 void keypad_Inputs(Pong_Keypad_Input *self, Smc_queue *pass){
 	//Set column one to a pulled down output
-		GPIOA->MODER |= (1<<10); //Sets PD5 to Output
-		GPIOA->OSPEEDR |= (1 << 10);
-		GPIOA->OSPEEDR |= (1 << 11);
-		GPIOA->MODER &= ~(1<<6); //Sets PD3 to Input
-		GPIOA->PUPDR |= (1<<11); //Sets PD5 to have pull down
-		GPIOA->PUPDR &= ~(1<<10); //Sets PD5 to have pull down
-		GPIOA->PUPDR |= (1<<6);  //Sets PD3 to have pull up
-		GPIOA->PUPDR &= ~(1<<7);  //Sets PD3 to have pull up
+	GPIOD->MODER |= (1<<8); //Sets PA4 to Output
+		GPIOD->OSPEEDR |= (1 << 8);
+		GPIOD->OSPEEDR |= (1 << 9);
+		GPIOD->MODER &= ~(1<<12); //Sets PA6 to Input
+		GPIOD->PUPDR |= (1<<9); //Sets PA4 to have pull down
+		GPIOD->PUPDR &= ~(1<<8); //Sets PA4 to have pull down
+		GPIOD->PUPDR |= (1<<13);  //Sets PA6 to have pull up
+		GPIOD->PUPDR &= ~(1<<12);  //Sets PA6 to have pull up
+		GPIOD->PUPDR &= ~(1<<13);
+		GPIOD->PUPDR |= (1<<12);
+	for(int x = 0; x <=12345; x++){}
+		first = GPIOD->IDR;
 
-		first = GPIOA->IDR;
-
-		GPIOA->MODER |= (1<<6); //Sets PD3 to Output
-		GPIOA->OSPEEDR |= (1 << 6);
-		GPIOA->OSPEEDR |= (1 << 7);
-		GPIOA->MODER &= ~(1<<10); //Sets PD5 to Input
-		GPIOA->PUPDR |= (1<<7); //Sets PD3 to have pull down
-		GPIOA->PUPDR &= ~(1<<6); //Sets PD3 to have pull down
-		GPIOA->PUPDR |= (1<<10);  //Sets PD5 to have pull up
-		GPIOA->PUPDR &= ~(1<<11); //Sets PD5 to have pull up
-
-		second = GPIOA->IDR;
+		GPIOD->MODER |= (1<<12); //Sets PA6 to Output
+		GPIOD->OSPEEDR |= (1 << 12);
+		GPIOD->OSPEEDR |= (1 << 13);
+		GPIOD->MODER &= ~(1<<8); //Sets PA4 to Input
+		GPIOD->PUPDR |= (1<<13); //Sets PA6 to have pull down
+		GPIOD->PUPDR &= ~(1<<12); //Sets PA6 to have pull down
+		GPIOD->PUPDR |= (1<<8);  //Sets PA4 to have pull up
+		GPIOD->PUPDR &= ~(1<<9); //Sets PA4 to have pull up
+	for(int x = 0; x <=12345; x++){}
+		second = GPIOD->IDR;
 
 		state.int_val = 0x0;
 
-		if((first == 0x10) && (second == 0x4030)){         //Button 1
+		if((first == 0x42) && (second == 0x32)){         //Button 1
 			state.int_val += 0x1;
 		}
-		if((first == 0x4000) && (second == 0x4030)){         //Button 7
+		if((first == 0x62) && (second == 0x22)){         //Button 7
 			state.int_val += 0x2;
 		}
 
 
-		if((first == 0x4018) && (second == 0x10)){         //Button 3
+		if((first == 0x62) && (second == 0x12)){         //Button 3
 					state.int_val += 0x4;
 			}
-			if((first == 0x4018) && (second == 0x4000)){         //Button 9
+			
+		if((first == 0x22) && (second == 0x32)){         //Button 9
 				state.int_val += 0x8;
-			}
+		}
 
-		self->push = state.int_val;
-		const Q_data *data = &state;
-		pass->put(&pass, data);
+		self->push = state;
+		smc_queue.put(pass, state);
 
 }
 
