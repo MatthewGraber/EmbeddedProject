@@ -11,10 +11,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "snake_enums.h"
+#include "circle_queue.h"
 
 //initilize the queue for it
 Smc_queue* buzzer_queue;
-smc_queue_init(buzzer_queue);
+// Smc_queue smc_queue_init(Smc_queue*);
 
 
 #endif /* INC_BUZZER_H_ */

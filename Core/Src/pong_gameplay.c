@@ -5,6 +5,8 @@
  *      Author: mbgraber19
  */
 #include "pong_gameplay.h"
+#include "main.h"
+#include "pong_main.h"
 
 void pong_init(pong_game* game) {
 

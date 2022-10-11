@@ -4,6 +4,8 @@
  *  Created on: Sep 27, 2022
  *      Author: mbgraber19
  */
+#include <stdint.h>
+#include "circle_queue.h"
 
 #ifndef CORE_INC_PONG_GAMEPLAY_H_
 #define CORE_INC_PONG_GAMEPLAY_H_
@@ -31,7 +33,7 @@ typedef struct {
 
 void pong_init(pong_game*);
 void pong_paddle_update(pong_game*, Smc_queue*);
-void pong_perodic_play(pong_game*);
+void pong_periodic_play(pong_game*);
 
 
 #endif /* CORE_INC_PONG_GAMEPLAY_H_ */

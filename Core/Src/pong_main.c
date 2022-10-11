@@ -8,8 +8,8 @@
 #include "display_DOGS_102.h"
 #include "snake_enums.h"
 #include "quadknob.h"
-#include "smc_queue.h"
-#include "show_snake.h"
+#include "circle_queue.h"
+#include "Pong_Keypad_Input.h"
 
 ///////////////////////////
 // Test -without input, the expected output = snake goes straight ahead every 1/2 second.
@@ -43,7 +43,7 @@ void pong_main(void){
 	// Construct the model "game" object:
 	pong_game my_game;
 	volatile uint16_t ram_dummy_1 = MEMORY_BARRIER_1;
-	pong_game_init(&my_game);
+	pong_init(&my_game);
 
 //	// Construct IPC
 //	Smc_queue turn_q;
@@ -52,7 +52,7 @@ void pong_main(void){
 	// Button queue
 	Smc_queue button_queue;
 	volatile uint16_t ram_dummy_2 = MEMORY_BARRIER_2;
-	smc_queue_init(&button_queue);
+	// smc_queue_init(&button_queue);
 
 	// Input object
 //	QuadKnob user_knob_1;
@@ -113,18 +113,19 @@ void pong_main(void){
 //				bool user_knob_1_pin_A = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobA_GPIO_Port, QuadKnobA_Pin));
 //				bool user_knob_1_pin_B = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobB_GPIO_Port, QuadKnobB_Pin));
 //				user_knob_1.update(&user_knob_1, user_knob_1_pin_A, user_knob_1_pin_B);
-				keypad_inputs(&input_1, &button_queue);
+				keypad_Inputs(&input_1, &button_queue);
 
 				// Get user command from "knob" - if any action, make it a queue packet and then mail it.
-				if (user_knob_1.get(&user_knob_1) != QUADKNOB_STILL){
-					Q_data command_packet;
-					command_packet.twist = user_knob_1.get(&user_knob_1);
-					turn_q.put(&turn_q, &command_packet);
-				}
-				pong_paddle_update(&my_game, &turn_q);
+//				if (user_knob_1.get(&user_knob_1) != QUADKNOB_STILL){
+//					Q_data command_packet;
+//					command_packet.twist = user_knob_1.get(&user_knob_1);
+//					turn_q.put(&turn_q, &command_packet);
+//				}
+
+				pong_paddle_update(&my_game, &button_queue);
 
 				// ASSERT THAT THE PADDLES ARE IN THE RIGHT PLACE HORIZONTALLY
-				while (&pong_game->p1.x != 0 || &pong_game->p2.x != (CHECKS_WIDE-1));
+				while ((my_game.p1.location.x != 0) || (my_game.p2.location.x != (CHECKS_WIDE-1)));
 
 				Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
 				//incremental_show_snake((const snake_game *)&my_game, false);	// TODO: replace this

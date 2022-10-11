@@ -66,8 +66,9 @@ void keypad_Inputs(Pong_Keypad_Input *self, Smc_queue *pass){
 				state.int_val += 0x8;
 			}
 
-		self->push = state;
-		smc_queue.put(pass, state);
+		self->push = state.int_val;
+		const Q_data *data = &state;
+		pass->put(&pass, data);
 
 }
 
