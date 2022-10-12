@@ -17,6 +17,7 @@ GPIOB->ODR = 0;	//SET GPIOB ENTIRE REGISTER LOW*/
 
 void Matrix_LED_DISPLAY_PONG( int L_PADDLE_Y_COORDINATE, int R_PADDLE_Y_COORDINATE, int BALL_X_COORDINATE, int BALL_Y_COORDINATE)
 {//Start Function
+	for (volatile int x = 0; x <= 3; x++){
 		  for (volatile int LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
 		  {		//Begin for LOOP
 			GPIOC->ODR &=~(1<<LED_MATRIX_COLUMN); 			//ENABLE CURRENT LED COLUMN
@@ -47,10 +48,10 @@ void Matrix_LED_DISPLAY_PONG( int L_PADDLE_Y_COORDINATE, int R_PADDLE_Y_COORDINA
 			}//End if 3
 
 
-			GPIOC->ODR |= (1<<LED_MATRIX_COLUMN); 		 //DISABLE CURRENT LED COLUMN
+			GPIOC->ODR = 255; 		 //DISABLE CURRENT LED COLUMN
 			GPIOB->ODR = 0;								 //RESET ROW
 		  }  //END For Loop
-}//End Function
+}}//End Function
 
 
 void Matrix_LED_DISPLAY_PLAYER_ONE_WIN() // Display P1
@@ -90,10 +91,10 @@ void Matrix_Initialize_Test(void)
 			GPIOC->ODR &=~(1<<LED_MATRIX_COLUMN); 					//ENABLE LED COLUMN
 			for (volatile uint32_t n = 0; n < 112357; n++);			 //STALL FOR TIME
 
-			GPIOC->ODR |= (1<<LED_MATRIX_COLUMN); 					//DISABLE LED COLUMN
+			GPIOC->ODR = 255; 					//DISABLE LED COLUMN
 			for (volatile uint32_t n = 0; n < 112357; n++); 		// STALL FOR TIME
 		} 		//END COLUMN FOR LOOP
-		GPIOB->ODR &=~(1<<LED_MATRIX_ROW); 			//DISABLE CURRENT LED ROW
+		GPIOB->ODR=0; 			//DISABLE CURRENT LED ROW
 	  } 		//END ROW FOR LOOP
 }
 

@@ -37,7 +37,7 @@ void keypad_Inputs(Pong_Keypad_Input *self, Smc_queue *pass){
 		GPIOD->PUPDR &= ~(1<<12);  //Sets PA6 to have pull up
 		GPIOD->PUPDR &= ~(1<<13);
 		GPIOD->PUPDR |= (1<<12);
-	for(int x = 0; x <=12345; x++){}
+	// for(int x = 0; x <=12345; x++){}
 		first = GPIOD->IDR;
 
 		GPIOD->MODER |= (1<<12); //Sets PA6 to Output
@@ -48,7 +48,7 @@ void keypad_Inputs(Pong_Keypad_Input *self, Smc_queue *pass){
 		GPIOD->PUPDR &= ~(1<<12); //Sets PA6 to have pull down
 		GPIOD->PUPDR |= (1<<8);  //Sets PA4 to have pull up
 		GPIOD->PUPDR &= ~(1<<9); //Sets PA4 to have pull up
-	for(int x = 0; x <=12345; x++){}
+	// for(int x = 0; x <=12345; x++){}
 		second = GPIOD->IDR;
 
 		state.int_val = 0x0;
@@ -69,8 +69,9 @@ void keypad_Inputs(Pong_Keypad_Input *self, Smc_queue *pass){
 				state.int_val += 0x8;
 		}
 
-		self->push = state;
-		smc_queue.put(pass, state);
+		self->push = state.int_val;
+		//const Q_data *data = &state;
+		pass->put(pass, &state);
 
 }
 
