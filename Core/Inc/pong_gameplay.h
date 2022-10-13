@@ -33,7 +33,7 @@ typedef struct {
 
 void pong_init(pong_game*);
 void pong_paddle_update(pong_game*, Smc_queue*);
-void pong_periodic_play(pong_game*);
+void pong_periodic_play(pong_game*, bool*);
 
 
 #endif /* CORE_INC_PONG_GAMEPLAY_H_ */

@@ -25,7 +25,7 @@ void pong_init(pong_game* game) {
 
 	//Initialize ball parameters
 	game->ball.goingRight = false;		//To the left, to the left
-	game->ball.verticalVelocity = 0;	//No vertical movement initially
+	game->ball.verticalVelocity = 1;	//No vertical movement initially
 
 }
 
@@ -39,7 +39,7 @@ void pong_paddle_update(pong_game* game, Smc_queue* queue) {
 		if (message.int_val & (1<<0) && (game->p1.location.y > 0)) {
 			game->p1.location.y--;
 		}
-		else if (message.int_val & (1<<1) && (game->p1.location.y <= (CHECKS_WIDE-PADDLE_LENGTH))) {
+		else if (message.int_val & (1<<1) && (game->p1.location.y < (CHECKS_WIDE-PADDLE_LENGTH))) {
 			game->p1.location.y++;
 		}
 
@@ -47,7 +47,7 @@ void pong_paddle_update(pong_game* game, Smc_queue* queue) {
 		if (message.int_val & (1<<2) && (game->p2.location.y > 0)) {
 			game->p2.location.y--;
 		}
-		else if (message.int_val & (1<<3) && (game->p2.location.y <= (CHECKS_WIDE-PADDLE_LENGTH))) {
+		else if (message.int_val & (1<<3) && (game->p2.location.y < (CHECKS_WIDE-PADDLE_LENGTH))) {
 			game->p2.location.y++;
 		}
 
@@ -55,7 +55,7 @@ void pong_paddle_update(pong_game* game, Smc_queue* queue) {
 }
 
 // Will be called every 500ms
-void pong_periodic_play(pong_game* game) {
+void pong_periodic_play(pong_game* game, bool* paddle_hit) {
 	// Get a fresh plot of the board to check for legal & fruit moves:
 	static int8_t board[CHECKS_WIDE][CHECKS_WIDE];
 	// Always clear the board and redraw it.
@@ -67,9 +67,9 @@ void pong_periodic_play(pong_game* game) {
 
 	// Mark the location of the paddles with 1s
 	board[game->p1.location.x][game->p1.location.y	] = 1;
-	board[game->p1.location.x][game->p1.location.y-1] = 1;
+	board[game->p1.location.x][game->p1.location.y+1] = 1;
 	board[game->p2.location.x][game->p2.location.y	] = 1;
-	board[game->p2.location.x][game->p2.location.y-1] = 1;
+	board[game->p2.location.x][game->p2.location.y+1] = 1;
 
 	// Mark the location of the ball with a -1
 	board[game->ball.location.x][game->ball.location.y] = -1;
@@ -97,6 +97,7 @@ void pong_periodic_play(pong_game* game) {
 	if (board[ballNewLocation.x][ballNewLocation.y] == 1) {
 		game->ball.goingRight ^= 1;	// Reverse ball direction
 		ballNewLocation.x += (game->ball.goingRight)?(2):(-2);	// Bounce it
+		*paddle_hit = true;
 	}
 	
 	// TODO: Decide if this should happen now, or later so the player can see the ball move into the space

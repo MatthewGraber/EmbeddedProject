@@ -7,28 +7,23 @@
 #include "stm32g0xx.h"
 #include "buzzer.h"
 
-void buzzer(int collision)
+void buzzer(bool collision)
 {
-	bool error = false;
-	Q_data q;
-	q.int_val = collision;
-	//need a certain queue for the data
-	error = buzzer_queue->get(buzzer_queue, &q);
 
-	if (collision == 1)
+	if (collision)
 	{
-		if((1<<6) & (GPIOA->BSRR))
+		if((1<<9) & (GPIOB->ODR))
 		{
-			GPIOA->BSRR |= (1<<6);
+			GPIOB->ODR &= ~(1<<9);
 		}
 		else
 		{
-			GPIOA->BSRR &= ~(1<<6);
+			GPIOB->ODR |= (1<<9);
 		}
 
 
 
-		//GPIOA_ODR ^= (1<<6);
+		//GPIOB_ODR ^= (1<<9);
 	}
 }
 

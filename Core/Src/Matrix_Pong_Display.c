@@ -17,7 +17,7 @@ GPIOB->ODR = 0;	//SET GPIOB ENTIRE REGISTER LOW*/
 
 void Matrix_LED_DISPLAY_PONG( int L_PADDLE_Y_COORDINATE, int R_PADDLE_Y_COORDINATE, int BALL_X_COORDINATE, int BALL_Y_COORDINATE)
 {//Start Function
-	for (volatile int x = 0; x <= 3; x++){
+	for (volatile int Function_Repeat = 0; Function_Repeat <= 12; Function_Repeat++){// adjust the amount of times this function repeats can increase the brightness
 		  for (volatile int LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
 		  {		//Begin for LOOP
 			GPIOC->ODR &=~(1<<LED_MATRIX_COLUMN); 			//ENABLE CURRENT LED COLUMN
@@ -89,10 +89,10 @@ void Matrix_Initialize_Test(void)
 		for (volatile uint8_t LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
 		{		 //BEGIN COLUMN FOR LOOP
 			GPIOC->ODR &=~(1<<LED_MATRIX_COLUMN); 					//ENABLE LED COLUMN
-			for (volatile uint32_t n = 0; n < 112357; n++);			 //STALL FOR TIME
+			for (volatile uint32_t n = 0; n < 12357; n++);			 //STALL FOR TIME
 
 			GPIOC->ODR = 255; 					//DISABLE LED COLUMN
-			for (volatile uint32_t n = 0; n < 112357; n++); 		// STALL FOR TIME
+			for (volatile uint32_t n = 0; n < 12357; n++); 		// STALL FOR TIME
 		} 		//END COLUMN FOR LOOP
 		GPIOB->ODR=0; 			//DISABLE CURRENT LED ROW
 	  } 		//END ROW FOR LOOP

@@ -11,7 +11,7 @@
 #include "circle_queue.h"
 #include "Pong_Keypad_Input.h"
 #include "Matrix_Pong_Display.h"
-
+#include "buzzer.h"
 ///////////////////////////
 // Test -without input, the expected output = snake goes straight ahead every 1/2 second.
 // Without_Input - Works!
@@ -39,14 +39,16 @@ void ram_health(uint16_t dummy_var, uint16_t pattern){
 void pong_main(void){
 	Matrix_Initialize_Test();
 
-	const int32_t timer_isr_500ms_restart = 500;
-	const int32_t timer_isr_2000ms_restart = 2000;
+	const int32_t timer_isr_500ms_restart = 300;
+	const int32_t timer_isr_2000ms_restart = 1600;
 
 	// INITIALIZE THE GAME
 	// Construct the model "game" object:
 	pong_game my_game;
 	volatile uint16_t ram_dummy_1 = MEMORY_BARRIER_1;
 	pong_init(&my_game);
+
+	bool paddle_hit = false;
 
 //	// Construct IPC
 //	Smc_queue turn_q;
@@ -67,13 +69,13 @@ void pong_main(void){
 
 	// Output object
 	// Block all interrupts while initializing - initial protocol timing is critical.
-	//__disable_irq();
+	__disable_irq();
 	// display_init();
-	//__enable_irq();
+	__enable_irq();
 
 	// Welcome screen = checkerboard for 2 seconds.
 	timer_isr_countdown = timer_isr_2000ms_restart;
-	while (timer_isr_countdown > 0){}
+	//while (timer_isr_countdown > 0){}
 	timer_isr_countdown = timer_isr_500ms_restart;
 	// Confirm all the rules and paint the initial pong.
 	// display_blank();
@@ -104,6 +106,7 @@ void pong_main(void){
 			Matrix_LED_DISPLAY_PLAYER_TWO_WIN();
 		}
 		else {
+			buzzer(paddle_hit);
 			// Check for user input every 1 ms & paint one block of the display.
 			if (prior_timer_countdown != timer_isr_countdown ){
 				prior_timer_countdown = timer_isr_countdown;
@@ -112,9 +115,14 @@ void pong_main(void){
 				// update "knob" object (which debounces each input pin and
 				// then calculates user command).
 				Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
-				keypad_Inputs(&input_1, &button_queue);
+				if (timer_isr_countdown % 30 == 0) {
+					keypad_Inputs(&input_1, &button_queue);
+				}
 				Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
 				pong_paddle_update(&my_game, &button_queue);
+
+				// Call the buzzer
+				//buzzer(true);
 
 				// ASSERT THAT THE PADDLES ARE IN THE RIGHT PLACE HORIZONTALLY
 				while ((my_game.p1.location.x != 0) || (my_game.p2.location.x != (CHECKS_WIDE-1)));
@@ -123,14 +131,13 @@ void pong_main(void){
 			}
 
 
-			if (timer_isr_countdown <= 400) {
-				timer_isr_countdown = timer_isr_countdown;
-			}
 
 			if (timer_isr_countdown <= 0) {
 				// Move and animate every 500 ms
 				timer_isr_countdown = timer_isr_500ms_restart;
-				pong_periodic_play(&my_game);
+				paddle_hit = false;
+				pong_periodic_play(&my_game, &paddle_hit);
+				Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
 			}
 		}
 
