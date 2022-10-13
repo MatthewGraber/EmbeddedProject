@@ -11,6 +11,7 @@
 #define INC_PONG_KEYPAD_INPUT_H_
 
 #include "main.h"
+#include "circle_queue.h"
 enum Move {upPad1, downPad1, upPad2, downPad2, still1, still2};
 
 typedef
@@ -22,7 +23,7 @@ typedef
 
 
 // Methods for Pong_Keypad_Input
-void keypad_Inputs();
+void keypad_Inputs(Pong_Keypad_Input *self, Smc_queue *pass);
 int Pong_Keypad_Input_get(const Pong_Keypad_Input *self);
 void Pong_Keypad_Input_init(Pong_Keypad_Input *self);
 

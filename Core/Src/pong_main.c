@@ -5,12 +5,13 @@
 #include "main.h"
 #include "pong_main.h"
 #include "pong_gameplay.h"
-#include "display_DOGS_102.h"
-#include "snake_enums.h"
+//#include "display_DOGS_102.h"
+//#include "snake_enums.h"
 #include "quadknob.h"
-#include "smc_queue.h"
-#include "show_snake.h"
-
+#include "circle_queue.h"
+#include "Pong_Keypad_Input.h"
+#include "Matrix_Pong_Display.h"
+#include "buzzer.h"
 ///////////////////////////
 // Test -without input, the expected output = snake goes straight ahead every 1/2 second.
 // Without_Input - Works!
@@ -36,38 +37,48 @@ void ram_health(uint16_t dummy_var, uint16_t pattern){
 
 
 void pong_main(void){
-	const int32_t timer_isr_500ms_restart = 500;
-	const int32_t timer_isr_2000ms_restart = 2000;
+	Matrix_Initialize_Test();
+
+	const int32_t timer_isr_500ms_restart = 300;
+	const int32_t timer_isr_2000ms_restart = 1600;
 
 	// INITIALIZE THE GAME
 	// Construct the model "game" object:
 	pong_game my_game;
 	volatile uint16_t ram_dummy_1 = MEMORY_BARRIER_1;
-	pong_game_init(&my_game);
+	pong_init(&my_game);
 
-	// Construct IPC
-	Smc_queue turn_q;
+	bool paddle_hit = false;
+
+//	// Construct IPC
+//	Smc_queue turn_q;
+//	smc_queue_init(&turn_q);
+
+	// Button queue
+	Smc_queue button_queue;
 	volatile uint16_t ram_dummy_2 = MEMORY_BARRIER_2;
-	smc_queue_init(&turn_q);
+	smc_queue_init(&button_queue);
 
 	// Input object
-	QuadKnob user_knob_1;
+//	QuadKnob user_knob_1;
+//	volatile uint16_t ram_dummy_3 = MEMORY_BARRIER_3;
+//	quadknob_init(&user_knob_1);
+	Pong_Keypad_Input input_1;
 	volatile uint16_t ram_dummy_3 = MEMORY_BARRIER_3;
-	quadknob_init(&user_knob_1);
+	Pong_Keypad_Input_init(&input_1);
 
 	// Output object
 	// Block all interrupts while initializing - initial protocol timing is critical.
 	__disable_irq();
-	display_init();
+	// display_init();
 	__enable_irq();
 
 	// Welcome screen = checkerboard for 2 seconds.
 	timer_isr_countdown = timer_isr_2000ms_restart;
-	Matrix_Initialize_Test();
-	while (timer_isr_countdown > 0){}
+	//while (timer_isr_countdown > 0){}
 	timer_isr_countdown = timer_isr_500ms_restart;
 	// Confirm all the rules and paint the initial pong.
-	display_blank();
+	// display_blank();
 	//pong_game_cleanup(&my_game);
 
 	// OPERATE THE GAME
@@ -78,46 +89,59 @@ void pong_main(void){
 		ram_health(ram_dummy_2, MEMORY_BARRIER_2);
 		ram_health(ram_dummy_3, MEMORY_BARRIER_3);
 
-	// ASSERT TIMER COUNTDOWN IN RANGE
+		// ASSERT TIMER COUNTDOWN IN RANGE
 		if ((timer_isr_countdown > timer_isr_500ms_restart)||
 				(timer_isr_countdown < 0)){
-			display_checkerboard();
+			// display_checkerboard();
 			while(1);
 		}
 
 #ifndef TEST_WITHOUT_INPUT
-		// Check for user input every 1 ms & paint one block of the display.
-		if (prior_timer_countdown != timer_isr_countdown ){
-			prior_timer_countdown = timer_isr_countdown;
-			// If time changed, about 1 ms has elapsed.
-			// Once each 1 ms, read input pins from user knob and then
-			// update "knob" object (which debounces each input pin and
-			// then calculates user command).
 
-			bool user_knob_1_pin_A = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobA_GPIO_Port, QuadKnobA_Pin));
-			bool user_knob_1_pin_B = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobB_GPIO_Port, QuadKnobB_Pin));
-			user_knob_1.update(&user_knob_1, user_knob_1_pin_A, user_knob_1_pin_B);
+		// If a player has won, display their victory instead of doing other things
+		if (my_game.p1.score >= 1) {
+			Matrix_LED_DISPLAY_PLAYER_ONE_WIN();
+		}
+		else if (my_game.p2.score >= 1) {
+			Matrix_LED_DISPLAY_PLAYER_TWO_WIN();
+		}
+		else {
+			buzzer(paddle_hit);
+			// Check for user input every 1 ms & paint one block of the display.
+			if (prior_timer_countdown != timer_isr_countdown ){
+				prior_timer_countdown = timer_isr_countdown;
+				// If time changed, about 1 ms has elapsed.
+				// Once each 1 ms, read input pins from user knob and then
+				// update "knob" object (which debounces each input pin and
+				// then calculates user command).
+				Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
+				if (timer_isr_countdown % 30 == 0) {
+					keypad_Inputs(&input_1, &button_queue);
+				}
+				Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
+				pong_paddle_update(&my_game, &button_queue);
 
-			// Get user command from "knob" - if any action, make it a queue packet and then mail it.
-			if (user_knob_1.get(&user_knob_1) != QUADKNOB_STILL){
-				Q_data command_packet;
-				command_packet.twist = user_knob_1.get(&user_knob_1);
-				turn_q.put(&turn_q, &command_packet);
+				// Call the buzzer
+				//buzzer(true);
+
+				// ASSERT THAT THE PADDLES ARE IN THE RIGHT PLACE HORIZONTALLY
+				while ((my_game.p1.location.x != 0) || (my_game.p2.location.x != (CHECKS_WIDE-1)));
+
+				Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
 			}
-			pong_paddle_update(&my_game, &turn_q);
 
-		    // ASSERT THAT THE PADDLES ARE IN THE RIGHT PLACE HORIZONTALLY
-			while (&pong_game->p1.x != 0 || &pong_game->p2.x != (CHECKS_WIDE-1));
 
-			Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
-			//incremental_show_snake((const snake_game *)&my_game, false);	// TODO: replace this
+
+			if (timer_isr_countdown <= 0) {
+				// Move and animate every 500 ms
+				timer_isr_countdown = timer_isr_500ms_restart;
+				paddle_hit = false;
+				pong_periodic_play(&my_game, &paddle_hit);
+				Matrix_LED_DISPLAY_PONG(my_game.p1.location.y, my_game.p2.location.y, my_game.ball.location.x, my_game.ball.location.y);
+			}
 		}
-		if (timer_isr_countdown <= 0) {
-			// Move and animate every 500 ms
-			timer_isr_countdown = timer_isr_500ms_restart;
-			pong_periodic_play(&my_game);
-			//incremental_show_snake(&my_game, true);	// TODO: replace this
-		}
+
+
 #endif
 #ifdef TEST_WITHOUT_INPUT
 		static int turns = 0;

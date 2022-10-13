@@ -35,13 +35,14 @@
 // created with STM32CubeMX.
 #include "main.h"
 #include "display_DOGS_102.h"
-#include "snake_gameplay.h" // To learn "CHECKS_WIDE"
+#include "pong_main.h" // To learn "CHECKS_WIDE"
+#include "stm32g0xx_hal_conf.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Hand-written code that Cube won't help with
 /////////////////////////////////////////////////////////////////////////////
 
-extern  SPI_HandleTypeDef hspi2; //TUTORIAL ...
+// extern  SPI_HandleTypeDef hspi2; //TUTORIAL ...
 // I wrote this line to borrow the hspi2 struct which was defined
 // for me by STM32CubeMX in MAIN.C. I have to, or the the calls
 // to HAL_SPI_Transmit(&hspi2 ...) won't build.
@@ -71,7 +72,7 @@ static void spi_msg_out(DOGS_packet pkt){
 	// Use the HAL.
 	// SPI1: Send 1 byte of pkt.byte, and timeout only after 100 ticks
 	// EXPECT ABOUT 16 us of delay from PD_6 low to SCK action.
-	HAL_SPI_Transmit(&hspi2, (uint8_t *)&pkt.byte, 1, SPI_timeout);
+	// HAL_SPI_Transmit(&hspi2, (uint8_t *)&pkt.byte, 1, SPI_timeout);
 }
 
 
@@ -96,7 +97,7 @@ void display_init(void){
 	const int init_stream_length = sizeof(init_stream)/ sizeof(init_stream[0]);
 	// - LET CUBEMX CONFIGURE REGISTERS // config_periph();
 	// Hardware reset first:
-	HAL_GPIO_WritePin(DOGS_reset_GPIO_Port, DOGS_reset_Pin, GPIO_PIN_RESET);
+	// HAL_GPIO_WritePin(DOGS_reset_GPIO_Port, DOGS_reset_Pin, GPIO_PIN_RESET);
 	// Or use the bit-banging method to do the same thing:
 	GPIOA->ODR &=~ GPIO_ODR_OD0; // nReset Low
 

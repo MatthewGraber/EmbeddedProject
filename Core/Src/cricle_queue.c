@@ -8,16 +8,18 @@
 #include "circle_queue.h"
 #include "snake_enums.h"
 
-Smc_queue* smc_queue_init(Smc_queue* q){
-	q->head = 0;
-	q->tail= 0;
-	q->cap = SMC_Q_BUFSIZE;
-	q->burden = 0;
-	q->put = &(smc_queue_put);
-	q->get = &(smc_queue_get);
-	q->peek = &(smc_queue_peek);
-	return q;
+Smc_queue* smc_queue_init(Smc_queue* Q) {
+	Q->head = 0;
+	Q->tail = 0;
+	Q->cap = SMC_Q_BUFSIZE;
+	Q->burden = 0;
+	Q->put = &(smc_queue_put);
+	Q->get = &(smc_queue_get);
+	Q->peek = &(smc_queue_peek);
+
+	return Q;
 }
+
 bool smc_queue_put(Smc_queue *q, const Q_data *msg)
 {
     //have to initialize success

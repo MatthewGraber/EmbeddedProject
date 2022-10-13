@@ -28,7 +28,7 @@
 
 
 typedef union {
-		int int_val;
+		uint8_t int_val;
 		float float_val;
 		enum Twist twist;
 } Q_data;
