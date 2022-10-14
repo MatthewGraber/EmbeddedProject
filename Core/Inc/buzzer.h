@@ -10,10 +10,12 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "circle_queue.h"
 
+#include "circle_queue.h"
+void buzzer(bool collision);
 //initilize the queue for it
+
 // Smc_queue smc_queue_init(Smc_queue*);
 
-void buzzer(bool);
+
 #endif /* INC_BUZZER_H_ */

@@ -38,9 +38,9 @@ bool smc_queue_put(Smc_queue *q, const Q_data *msg)
 		 q->buffer[q->tail] = *msg;
 
 		 //if the tail is out of range of the array then i set the tail back to zero
-		 if (q->tail == (q->cap)-1)
+		 if ((q->tail) == (q->cap)-1)
 		 {
-		     q->tail =0;
+		     q->tail = 0;
 		 }
 		 else
 		 {
@@ -67,7 +67,7 @@ bool smc_queue_get(Smc_queue *q, Q_data  *msg){
 	{
 	    *msg = q->buffer[q->head];
 	    q-> burden -= 1;
-		if(q->head >= (q->cap)-1)
+		if(q->head >= ((q->cap)-1))
 		{
 		    //the head is set to -1 because i add one right after if statement
 		    //and it doesn't work

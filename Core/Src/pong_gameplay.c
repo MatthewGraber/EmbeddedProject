@@ -38,17 +38,41 @@ void pong_paddle_update(pong_game* game, Smc_queue* queue) {
 		// P1 controls
 		if (message.int_val & (1<<0) && (game->p1.location.y > 0)) {
 			game->p1.location.y--;
+			//added an asssertion here
+			//can't have paddle go off of display
+			if(game->p1.location.y < 0)
+			{
+				while(1);
+			}
 		}
 		else if (message.int_val & (1<<1) && (game->p1.location.y < (CHECKS_WIDE-PADDLE_LENGTH))) {
 			game->p1.location.y++;
+			//added an assertion here
+			//cant have paddle go off of the display
+			if(game->p1.location.y > 8)
+			{
+				while(1);
+			}
 		}
 
 		// P2 controls
 		if (message.int_val & (1<<2) && (game->p2.location.y > 0)) {
 			game->p2.location.y--;
+			//added an assertion here
+			//cant have paddle go off of the display
+			if(game->p2.location.y < 0)
+			{
+				while(1);
+			}
 		}
 		else if (message.int_val & (1<<3) && (game->p2.location.y < (CHECKS_WIDE-PADDLE_LENGTH))) {
 			game->p2.location.y++;
+			//added an assertion here
+			//cant have paddle go off of the display
+			if(game->p2.location.y > 8)
+			{
+				while(1);
+			}
 		}
 
 	}

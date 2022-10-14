@@ -12,7 +12,7 @@
 
 #include "main.h"
 #include "circle_queue.h"
-enum Move {upPad1, downPad1, upPad2, downPad2, still1, still2};
+//enum Move {upPad1, downPad1, upPad2, downPad2, still1, still2};
 
 typedef
 		struct Pong_Keypad_Input_struct{

@@ -15,10 +15,10 @@
  * GPIOC->ODR = 255; //SET GPIOC ENTIRE REGISTER HIGH
 GPIOB->ODR = 0;	//SET GPIOB ENTIRE REGISTER LOW*/
 
-void Matrix_LED_DISPLAY_PONG( int L_PADDLE_Y_COORDINATE, int R_PADDLE_Y_COORDINATE, int BALL_X_COORDINATE, int BALL_Y_COORDINATE)
+void Matrix_LED_DISPLAY_PONG(const uint8_t L_PADDLE_Y_COORDINATE, const uint8_t R_PADDLE_Y_COORDINATE, const uint8_t BALL_X_COORDINATE, const uint8_t BALL_Y_COORDINATE)
 {//Start Function
-	for (volatile int Function_Repeat = 0; Function_Repeat <= 12; Function_Repeat++){// adjust the amount of times this function repeats can increase the brightness
-		  for (volatile int LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
+	for (volatile uint8_t Function_Repeat = 0; Function_Repeat <= 20; Function_Repeat++){// adjust the amount of times this function repeats can increase the brightness
+		  for (volatile uint8_t LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
 		  {		//Begin for LOOP
 			GPIOC->ODR &=~(1<<LED_MATRIX_COLUMN); 			//ENABLE CURRENT LED COLUMN
 			if (LED_MATRIX_COLUMN == 0) // display left paddle if statement
@@ -56,7 +56,7 @@ void Matrix_LED_DISPLAY_PONG( int L_PADDLE_Y_COORDINATE, int R_PADDLE_Y_COORDINA
 
 void Matrix_LED_DISPLAY_PLAYER_ONE_WIN() // Display P1
 {//Start Function
-	for (volatile int LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
+	for (volatile uint8_t LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
 	{//Begin for LOOP
 		GPIOC->ODR &=~(1<<LED_MATRIX_COLUMN); 		//ENABLE CURRENT LED COLUMN
 		int LED_PLAYER_WIN_ROW_VALUE[8]={126,10,14,0,126,0,0,0};
@@ -69,10 +69,10 @@ void Matrix_LED_DISPLAY_PLAYER_ONE_WIN() // Display P1
 
 void Matrix_LED_DISPLAY_PLAYER_TWO_WIN() // Display P2
 {//Start Function
-	for (volatile int LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
+	for (volatile uint8_t LED_MATRIX_COLUMN = 0; LED_MATRIX_COLUMN <= 7; LED_MATRIX_COLUMN++)
 	{//Begin for LOOP
 		GPIOC->ODR &=~(1<<LED_MATRIX_COLUMN); 		//ENABLE CURRENT LED COLUMN
-		int LED_PLAYER_WIN_ROW_VALUE[8]={126,10,14,0,114,82,94,0};  // Register values for propper row lights
+		uint8_t LED_PLAYER_WIN_ROW_VALUE[8]={126,10,14,0,114,82,94,0};  // Register values for propper row lights
 		GPIOB->ODR =LED_PLAYER_WIN_ROW_VALUE[LED_MATRIX_COLUMN];  // Enable Row
 		GPIOC->ODR =255;							// RESET COLUMN
 		GPIOB->ODR = 0;								 //RESET ROW
